@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wo ist was? Tag der offenen Tür (Copy)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Gochi+Hand&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* Welt des Programmhefts: Papier, schwarze Filzstift-Konturen, Gusti-Türkis, Banner-Gelb, Flügel-Orange */
+  --paper:#FFFDF5; --ink:#1D1D1B; --muted:#55524B; --gusti:#4EC3B5; --gusti-deep:#1F7F74; --sun:#FFD23F; --ember:#F39A3D; --mist:#E6F5F2; --dim:#ECEAE3;
+  --font-display:"Gochi Hand","Comic Neue","Segoe Print",cursive;
+  --font-body:"Atkinson Hyperlegible",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --line:2.5px solid var(--ink);
+  --c-U:#2563C9; --c-N:#0F8A7E; --c-K:#D9731A; --c-I:#7445C2; --c-E:#C23B3B; --c-S:#8A6D00; --c-B:#C0397A; --c-O:#5E6672;
+  /* Layout: Kopf mit Gusti, Zeitfenster, Suche, Etagen-Tabs, Plan; Detail-Ebene als Schublade (Handy unten, Desktop rechts) */
+  color-scheme: light;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--font-body);font-size:16px;line-height:1.45}
+button,input{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--ember);outline-offset:2px}
+.wrap{max-width:1080px;margin:0 auto;padding:16px 16px 48px;display:flex;flex-direction:column;gap:18px}
+
+/* Kopf */
+.hero{display:grid;grid-template-columns:1fr auto;gap:8px 12px;align-items:end}
+.banner{grid-column:1/-1;justify-self:start;background:var(--sun);border:var(--line);padding:4px 18px;font-family:var(--font-display);font-size:20px;line-height:1.2;clip-path:polygon(0 0,100% 0,97% 50%,100% 100%,0 100%,3% 50%)}
+.hero h1{margin:0;font-family:var(--font-display);font-weight:400;font-size:clamp(44px,11vw,76px);line-height:.95;text-wrap:balance}
+.hero p{margin:6px 0 0;max-width:34ch;color:var(--muted)}
+.hero img{width:clamp(96px,26vw,170px);height:auto;display:block}
+
+/* Zeitfenster */
+.windows{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.win{border:var(--line);border-radius:14px;background:#fff;padding:8px 10px;text-align:left;cursor:pointer;display:flex;flex-direction:column;gap:0;min-height:64px;box-shadow:3px 3px 0 var(--ink);transition:transform .12s}
+.win b{font-family:var(--font-display);font-weight:400;font-size:20px;line-height:1.05}
+.win span{font-size:13px;color:var(--muted)}
+.win[aria-pressed="true"]{background:var(--gusti);box-shadow:1px 1px 0 var(--ink);transform:translate(2px,2px)}
+.win[aria-pressed="true"] span{color:var(--ink)}
+.live{display:inline-block;margin-left:4px;padding:0 6px;border-radius:99px;background:var(--ember);color:var(--ink);font-size:11px;font-weight:700;vertical-align:middle}
+@media (max-width:640px){.windows{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* Suche */
+.search{position:relative}
+.search label{display:block;font-weight:700;margin-bottom:4px}
+.search input{width:100%;border:var(--line);border-radius:14px;padding:12px 14px;background:#fff;font-size:17px}
+.results{list-style:none;margin:6px 0 0;padding:0;border:var(--line);border-radius:14px;background:#fff;overflow:hidden}
+.results:empty{display:none}
+.results li+li{border-top:1px solid var(--dim)}
+.results button{width:100%;text-align:left;background:none;border:0;padding:10px 14px;cursor:pointer;display:flex;gap:10px;align-items:baseline}
+.results button:hover{background:var(--mist)}
+.results .where{margin-left:auto;font-size:13px;color:var(--muted);white-space:nowrap}
+
+/* Etagen + Plan */
+.planhead{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}
+.floors{display:flex;gap:6px}
+.floor{border:var(--line);border-radius:99px;padding:6px 16px;background:#fff;cursor:pointer;font-weight:700;min-height:44px}
+.floor[aria-selected="true"]{background:var(--ink);color:var(--paper)}
+.hint{font-size:14px;color:var(--muted)}
+.mapbox{border:var(--line);border-radius:20px;background:#fff;padding:8px;box-shadow:4px 4px 0 var(--ink)}
+svg.map{display:block;width:100%;height:auto}
+.zone{cursor:pointer}
+.zone rect.body{stroke:var(--ink);stroke-width:4;transition:fill .15s}
+.zone text{font-family:var(--font-body);fill:var(--ink);pointer-events:none}
+.zone .zname{font-family:var(--font-display);font-size:40px}
+.zone .zsub{font-size:22px;fill:var(--muted)}
+.zone:hover rect.body,.zone:focus-visible rect.body{fill:var(--sun)}
+.zone:focus{outline:none}
+.zone:focus-visible rect.body{stroke:var(--ember);stroke-width:7}
+.zone.off{cursor:default}
+.zone.off text{fill:#8A877F}
+.zone.off:hover rect.body{fill:var(--dim)}
+.zone.sel rect.body{fill:var(--sun)}
+.badge circle{fill:var(--ember);stroke:var(--ink);stroke-width:3}
+.badge text{font-family:var(--font-body);font-weight:700;font-size:24px}
+.backdrop rect{fill:none;stroke:var(--ink);stroke-width:3;stroke-dasharray:10 8}
+.backdrop text{font-family:var(--font-display);font-size:30px;fill:var(--muted)}
+
+/* Kategorien */
+.cats{display:flex;flex-wrap:wrap;gap:6px}
+.cat{display:flex;align-items:center;gap:6px;border:2px solid var(--ink);border-radius:99px;padding:5px 12px;background:#fff;cursor:pointer;font-size:14px;min-height:40px}
+.cat[aria-pressed="false"]{opacity:.45;background:transparent}
+.dot{width:11px;height:11px;border-radius:50%;flex:none;display:inline-block}
+
+/* Gut zu wissen */
+h2{margin:8px 0 0;font-family:var(--font-display);font-weight:400;font-size:34px;line-height:1.05}
+.tips{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px}
+.tip{border:var(--line);border-radius:16px;padding:12px 14px;background:#fff;display:flex;flex-direction:column;gap:4px}
+.tip b{font-size:17px}
+.tip p{margin:0;font-size:15px;color:var(--muted)}
+.tip button{align-self:flex-start;margin-top:4px;border:0;background:none;padding:0;color:var(--gusti-deep);font-weight:700;text-decoration:underline;cursor:pointer}
+.tip.rally{background:var(--mist)}
+.stamps{display:flex;gap:4px;margin:4px 0}
+.stamps span{width:30px;height:30px;border:2px solid var(--ink);border-radius:50%;display:grid;place-items:center;font-family:var(--font-display);font-size:20px;background:var(--sun)}
+
+/* Liste */
+.list{display:flex;flex-direction:column;gap:14px}
+.group h3{margin:0 0 6px;font-size:16px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+.rows{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:8px}
+.row{border:2px solid var(--ink);border-radius:12px;background:#fff;padding:8px 12px;text-align:left;cursor:pointer;display:flex;flex-direction:column;gap:2px;width:100%}
+.row:hover{background:var(--mist)}
+.row .top{display:flex;gap:8px;align-items:baseline}
+.row .nr{font-weight:700}
+.row .acts{font-size:14px;color:var(--muted)}
+.empty{color:var(--muted);font-style:italic}
+
+/* Detail-Schublade */
+.drawer{position:fixed;left:0;right:0;bottom:0;max-height:78%;background:var(--paper);border-top:var(--line);border-radius:22px 22px 0 0;box-shadow:0 -6px 0 rgba(29,29,27,.12);display:flex;flex-direction:column;transform:translateY(105%);visibility:hidden;transition:transform .22s ease-out,visibility 0s linear .22s;z-index:20}
+.drawer.open{transform:none;visibility:visible;transition:transform .22s ease-out,visibility 0s}
+@media (min-width:900px){.drawer{left:auto;top:0;width:420px;max-height:none;border-top:0;border-left:var(--line);border-radius:0;transform:translateX(105%)}}
+@media (prefers-reduced-motion:reduce){.drawer,.win,.zone rect.body{transition:none}}
+.dhead{display:flex;align-items:flex-start;gap:10px;padding:14px 16px 10px;border-bottom:2px solid var(--ink)}
+.dhead h2{margin:0;font-size:32px}
+.dhead .where{font-size:14px;color:var(--muted)}
+.close{margin-left:auto;border:var(--line);background:#fff;border-radius:50%;width:44px;height:44px;cursor:pointer;flex:none;display:grid;place-items:center}
+.dbody{overflow:auto;padding:12px 16px 24px;display:flex;flex-direction:column;gap:10px}
+.room{border:var(--line);border-radius:16px;background:#fff;padding:10px 12px;display:flex;flex-direction:column;gap:6px}
+.room.flash{animation:flash 1.4s ease-out}
+@keyframes flash{0%,40%{background:var(--sun)}100%{background:#fff}}
+.room h3{margin:0;font-size:18px;display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}
+.room h3 small{font-weight:400;color:var(--muted);font-size:14px}
+.act{display:grid;grid-template-columns:auto 1fr auto;gap:4px 8px;align-items:start}
+.act .dot{margin-top:6px}
+.act .t{font-weight:700}
+.act .m{grid-column:2;font-size:14px;color:var(--muted)}
+.wins{grid-column:2;display:flex;flex-wrap:wrap;gap:4px}
+.wins span{font-size:12px;border:1.5px solid var(--ink);border-radius:99px;padding:0 7px;background:var(--mist)}
+.state{grid-column:2;font-size:13px;font-weight:700;color:var(--gusti-deep)}
+.fav{border:2px solid var(--ink);background:#fff;border-radius:10px;min-width:44px;min-height:40px;cursor:pointer;font-size:13px;font-weight:700;padding:0 8px}
+.fav[aria-pressed="true"]{background:var(--sun)}
+.more{border:0;background:none;color:var(--gusti-deep);font-weight:700;text-decoration:underline;cursor:pointer;padding:0;align-self:flex-start}
+.scrim{position:fixed;inset:0;background:rgba(29,29,27,.25);z-index:15;display:none}
+.scrim.open{display:block}
+@media (min-width:900px){.scrim{display:none!important}}
+footer{font-size:13px;color:var(--muted);border-top:2px dashed var(--ink);padding-top:10px}
+.vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="hero">
+    <div class="banner">Tag der offenen Tür · Samstag, 28. November 2026</div>
+    <div>
+      <h1>Wo ist was?</h1>
+      <p>Tippen Sie auf einen Bereich im Plan. Dann sehen Sie, was dort wann passiert.</p>
+    </div>
+    <img src="gusti.png" alt="Gusti, das Schulmaskottchen, mit einem Buch in der Hand">
+  </header>
+
+  <section aria-label="Zeitfenster">
+    <div class="windows" id="windows"></div>
+  </section>
+
+  <section class="search" role="search">
+    <label for="q">Suchen nach Angebot, Klasse oder Raum</label>
+    <input id="q" type="search" placeholder="z. B. Slime, 5b, Waffeln, D070" autocomplete="off">
+    <ul class="results" id="results" aria-live="polite"></ul>
+  </section>
+
+  <section aria-label="Gebäudeplan" style="display:flex;flex-direction:column;gap:10px">
+    <div class="planhead">
+      <div class="floors" role="tablist" aria-label="Etage" id="floors"></div>
+      <span class="hint" id="floorhint"></span>
+    </div>
+    <div class="mapbox"><svg class="map" id="map" viewBox="0 0 1000 720" role="group" aria-label="Schematischer Plan der Schule"></svg></div>
+    <div class="cats" id="cats" aria-label="Arten von Angeboten"></div>
+  </section>
+
+  <section id="mine" hidden>
+    <h2>Mein Rundgang</h2>
+    <div class="rows" id="minerows"></div>
+  </section>
+
+  <section>
+    <h2>Gut zu wissen</h2>
+    <div class="tips">
+      <div class="tip rally">
+        <b>Für Viertklässler: die Fantasiewesen-Rallye</b>
+        <div class="stamps" aria-label="Stempel G U S T A V"><span>G</span><span>U</span><span>S</span><span>T</span><span>A</span><span>V</span></div>
+        <p>Start an der Bühne im Foyer. Die Kinder gehen durch das große Buch und den geheimen Gang, holen sich eine Stempelkarte und besuchen mit der SV verschiedene Aktionen. Wer alle sechs Stempel hat, bekommt an der Fantasiewesen-Station ein Fantasiewesen. Dauer etwa 1,5 Stunden.</p>
+        <button type="button" data-open="foyer">Zur Bühne im Foyer</button>
+      </div>
+      <div class="tip"><b>Bezahlen mit Gustav-Talern</b><p>An den Ständen wird nicht bar bezahlt. Taler gibt es an zwei Tischen im Flur und in der Mensa, 9:30–14:30 Uhr.</p><button type="button" data-open="flur">Taler-Stände zeigen</button></div>
+      <div class="tip"><b>Anmeldung Klasse 5</b><p>Im Raum „Zollverein“ (3. OG, B314/B315), in Terminen à 30 Minuten. Schülerinnen und Schüler der SV begleiten Sie hin.</p><button type="button" data-open="b314">Im Plan zeigen</button></div>
+      <div class="tip"><b>Kinderbetreuung</b><p>Für jüngere Geschwister: Raum B041, 10–14 Uhr, betreut von der Klasse 10D.</p><button type="button" data-open="b041">Im Plan zeigen</button></div>
+      <div class="tip"><b>Erste Hilfe</b><p>Der Sanitätsdienst der Schule ist in Raum D070.</p><button type="button" data-open="d070">Im Plan zeigen</button></div>
+      <div class="tip"><b>Wintertheater</b><p>Gustav verzaubert! Ab 14:30 Uhr in der Aula. Karten an der Kasse im Foyer.</p><button type="button" data-open="aula">Zur Aula</button></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Alle Angebote</h2>
+    <p class="hint" id="listhint" style="margin:4px 0 10px"></p>
+    <div class="list" id="list"></div>
+  </section>
+
+  <footer>Schematischer Plan, nicht maßstabsgetreu. Klassenräume sind voraussichtlich bis 12 Uhr geöffnet. Stand: 22.11.2026.</footer>
+</div>
+
+<div class="scrim" id="scrim"></div>
+<aside class="drawer" id="drawer" role="dialog" aria-modal="false" aria-labelledby="dtitle" aria-hidden="true">
+  <div class="dhead">
+    <div><h2 id="dtitle">Bereich</h2><div class="where" id="dwhere"></div></div>
+    <button class="close" id="dclose" type="button" aria-label="Schließen"><svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M3 3l12 12M15 3L3 15" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg></button>
+  </div>
+  <div class="dbody" id="dbody"></div>
+</aside>
+
+<script>
+(function(){
+"use strict";
+var CAT={U:"Offener Unterricht",N:"Naturwissenschaften",K:"Basteln & Kreatives",I:"Info & Beratung",E:"Essen & Trinken",S:"Sport & Bewegung",B:"Bühne & Theater",O:"Service"};
+var WIN=[
+  {id:"T",name:"Gustav stellt sich vor!",time:"10–12 Uhr",from:600,to:720},
+  {id:"S",name:"Gustav feiert!",time:"12–14:30 Uhr",from:720,to:870},
+  {id:"W",name:"Gustav verzaubert!",time:"ab 14:30 Uhr",from:870,to:1020}
+];
+var FLOORS=[{id:0,name:"Erdgeschoss"},{id:1,name:"1. OG"},{id:3,name:"3. OG"}];
+
+/* a(Titel, Kategorie, Klasse, Zeittext, Zeitfenster, Slots[[von,bis] in Minuten], Hinweis) */
+function a(t,c,k,z,w,s,n){return {t:t,c:c,k:k||"",z:z||"",w:w,s:s||null,n:n||""};}
+var R=[
+ // Bauteil A, EG
+ {id:"foyer",nr:"Foyer",name:"Bühne und Info-Stände",zone:"foyer",f:0,acts:[
+   a("Begrüßung mit Musik","B","","Bühne","T"),
+   a("Musikpräsentationen","B","","Bühne","S"),
+   a("Start der Fantasiewesen-Rallye","I","für Viertklässler","an der Bühne","T"),
+   a("Führungen durch die Schule","I","Sek II","Treffpunkt Foyer vorne","T"),
+   a("Oberstufe: Info und Begleitung in die 3. Etage","I","","","T"),
+   a("Info 9er / 10er","I","","","T"),
+   a("Info Ganztag","I","","","T"),
+   a("Europaschule","I","Sek II","","T"),
+   a("Förderverein","I","","","T"),
+   a("Infos zum Schulsportverein","S","","","T"),
+   a("Infos zur JuB","I","","","T"),
+   a("SV-Arbeit und Ideenbaum zur Demokratiebildung","I","SV","","T"),
+   a("Vorstellung BUS-Klasse und Preisausgabe Fantasiewesen","I","9g","neben Made+","T"),
+   a("Schülerfirma Made+","K","","auch in C052, vor dem Wintertheater","T"),
+   a("Kasse Wintertheater","O","","","TSW")]},
+ {id:"aula",nr:"Aula",name:"",zone:"aula",f:0,acts:[a("Wintertheater","B","","ab 14:30 Uhr","W",[[870,1020]])]},
+ {id:"mensa",nr:"Mensa",name:"Elterncafé",zone:"mensa",f:0,acts:[
+   a("Waffeln","E","Elternvertretung","","TS"),
+   a("Gustav-Taler Stand 3","O","","9:30–14:30 Uhr","TS",[[570,870]])]},
+ {id:"flur",nr:"Flur",name:"am Foyer",zone:"flur",f:0,acts:[
+   a("Gustav-Taler Stand 1 und 2","O","","9:30–14:30 Uhr","TS",[[570,870]]),
+   a("Allgemeine Info","I","10E","","T"),
+   a("Streitschlichtung","I","","","T"),
+   a("Lebende Schilder helfen beim Weg","O","7a","","T")]},
+ // Bauteil C, EG
+ {id:"c045",nr:"C045 + C046",name:"Kunsträume",zone:"C",f:0,acts:[a("Zufallswerkstatt – Kunst zum Mitnehmen","K","","","T")]},
+ {id:"c047",nr:"C047",name:"Kunstraum",zone:"C",f:0,acts:[a("Buchstaben in Fluchtpunktperspektive","K","10B","","T")]},
+ {id:"c049",nr:"C049",name:"Technikraum",zone:"C",f:0,acts:[a("Lesezeichen-Workshop","K","8E","","T")]},
+ {id:"c052",nr:"C052",name:"",zone:"C",f:0,acts:[a("Schülerfirma Made+","K","","","T")]},
+ {id:"c053",nr:"C053",name:"Technikraum",zone:"C",f:0,acts:[a("Henna-Tattoos","K","Q2","","T")]},
+ {id:"c054",nr:"C054",name:"Technikraum",zone:"C",f:0,acts:[a("Dekofiguren aus Chenilledraht","K","7E","","T")]},
+ {id:"c055",nr:"C055",name:"Kunstraum",zone:"C",f:0,acts:[a("Slime selbst machen","K","9D","10–12 Uhr","T",[[600,720]])]},
+ {id:"c057",nr:"C057",name:"",zone:"C",f:0,acts:[a("Schulsozialarbeit stellt sich vor","I","","","T")]},
+ {id:"hofc",nr:"Innenhof C",name:"",zone:"hofC",f:0,acts:[a("Dosenwerfen","S","7B","","T")]},
+ // Bauteil D, EG
+ {id:"d065",nr:"D065",name:"",zone:"D",f:0,acts:[a("Escape Room NW / Mathe","U","6A","10–12 Uhr","T",[[600,720]])]},
+ {id:"d066",nr:"D066",name:"",zone:"D",f:0,acts:[a("Offener Unterricht Erdkunde","U","6b","10–12 Uhr","T",[[600,720]])]},
+ {id:"d067",nr:"D067",name:"",zone:"D",f:0,acts:[a("SV und „Schüler helfen Schülern“","I","SV","","T")]},
+ {id:"d068",nr:"D068",name:"Inklusion",zone:"D",f:0,acts:[a("Inklusion und Teambahn","I","","","T")]},
+ {id:"d070",nr:"D070",name:"",zone:"D",f:0,acts:[a("Bilingualer Unterricht Englisch: Infowand und Ausstellung","I","7D","","T"),a("Sanitätsdienst (Erste Hilfe)","O","","","TSW")]},
+ {id:"d071",nr:"D071",name:"",zone:"D",f:0,acts:[a("Gedankenwerkstatt im Drachenreich (Philosophie)","K","","","T")]},
+ {id:"d073",nr:"D073",name:"",zone:"D",f:0,acts:[a("Offener Unterricht Mathe","U","6d","10–12 Uhr","T",[[600,720]])]},
+ {id:"d073d",nr:"D073 (Diff)",name:"",zone:"D",f:0,acts:[a("Sprachen: Türkisch (HSU und WP), Französisch, Spanisch","I","","","T")]},
+ {id:"d074",nr:"D074",name:"",zone:"D",f:0,acts:[a("Mandalas malen","K","8F","","T")]},
+ {id:"d075",nr:"D075",name:"",zone:"D",f:0,acts:[a("Spielewelt","K","8B","","T")]},
+ {id:"d076",nr:"D076",name:"",zone:"D",f:0,acts:[a("Offener Unterricht Erdkunde","U","6g","10–12 Uhr","T",[[600,720]])]},
+ {id:"dhof",nr:"D-Hof",name:"ggf. A/B-Hof",zone:"hofD",f:0,acts:[a("Gemüseackerdemie: Kräutersalz und Vogelfutterringe","N","8a","","TS")]},
+ // Bauteil B, EG
+ {id:"b029",nr:"B029",name:"Schulküche",zone:"B",f:0,acts:[a("Gustav Limo-Labor","N","","10–13:30 Uhr","TS",[[600,810]])]},
+ {id:"b032",nr:"B032",name:"Informatik",zone:"B",f:0,acts:[a("Roboter","N","9F","","T")]},
+ {id:"b040",nr:"B040",name:"Bandraum",zone:"B",f:0,acts:[a("Offener Profilunterricht Bandklasse","U","5d","10:50–11:20 Uhr","T",[[650,680]])]},
+ {id:"b041",nr:"B041",name:"",zone:"B",f:0,acts:[a("Kinderbetreuung für Geschwister","O","10D","10–14 Uhr","TS",[[600,840]])]},
+ // Außen
+ {id:"winterdorf",nr:"Winterdorf",name:"Innenhof zwischen B und D",zone:"wd",f:0,acts:[
+   a("Sandwichtoast","E","8D","","TS"),a("Dessert im Becher","E","9C","","TS"),a("Internationale Backwaren","E","7F","","TS"),
+   a("Kinderpunsch und Kakao","E","10F","","TS"),a("Hot Dogs","E","10A","","TS"),a("Zuckerwatte","E","9E und SV","","TS"),
+   a("Sandwich","E","9B","","S"),a("Süßigkeitentüten","E","6f","","TS"),a("Candy Bar und Snacks","E","8C","","TS"),a("Süße und salzige Speisen","E","7C","","TS")]},
+ {id:"th1",nr:"TH1",name:"Turnhalle 1",zone:"TH",f:0,acts:[a("Miniolympiade","S","","","T")]},
+ {id:"th2",nr:"TH2",name:"Turnhalle 2",zone:"TH",f:0,acts:[a("Bewegungslandschaft und Sporthelfer:innen","S","ES Sport und Gesundheit","","T")]},
+ {id:"schulstrasse",nr:"Schulstraße",name:"",zone:"str",f:0,acts:[a("SV-Guides für Eltern","I","SV","","T"),a("SV-Guides für Kinder","I","SV","","T")]},
+ {id:"parkplatz",nr:"Parkplatz",name:"",zone:"park",f:0,acts:[a("Parkplatzdienst weist ein","O","10C","10–14 Uhr","TS",[[600,840]])]},
+ // 1. OG
+ {id:"d169",nr:"D169",name:"",zone:"D",f:1,acts:[a("Oobleck und klebende Knetballons","N","5a","10–13 Uhr, 3 Gruppen à 1 Stunde","TS",[[600,780]])]},
+ {id:"d170",nr:"D170",name:"",zone:"D",f:1,acts:[a("Offener Unterricht Englisch","U","5b","10–12 Uhr","T",[[600,720]]),a("Offener Unterricht Mathe","U","5b","10–12 Uhr","T",[[600,720]])]},
+ {id:"d171",nr:"D171",name:"",zone:"D",f:1,acts:[a("Interaktive Mini-Games Deutsch","U","5c","10:15–10:45 und 11:00–11:30 Uhr","T",[[615,645],[660,690]])]},
+ {id:"d177",nr:"D177",name:"",zone:"D",f:1,acts:[a("Info: Was ist eine Gesamtschule?","I","","10:30–10:50 Uhr","T",[[630,650]])]},
+ {id:"d178",nr:"D178",name:"",zone:"D",f:1,acts:[a("Offener Unterricht zu Märchen","U","5d","10:00–10:50 und 11:20–12:00 Uhr","T",[[600,650],[680,720]])]},
+ {id:"d179",nr:"D179",name:"",zone:"D",f:1,acts:[a("Quiz-Time Englisch","U","5e","10:30–10:50 Uhr","T",[[630,650]]),a("GL-Quiz","U","5e","11:00–11:20 Uhr","T",[[660,680]])]},
+ {id:"d180",nr:"D180",name:"",zone:"D",f:1,acts:[a("Offener Unterricht Deutsch: Lektüre in Gruppen","U","5f","10:30–12:30 Uhr, 2 Gruppen à 1 Stunde","TS",[[630,750]])]},
+ {id:"b143",nr:"B143 + B144",name:"Biologie",zone:"B",f:1,acts:[a("Mikroskopieren","N","6c und 9a","10–12 Uhr","T",[[600,720]])]},
+ {id:"b146",nr:"B146",name:"Biologie",zone:"B",f:1,acts:[a("Chromatographie zum Mitmachen","N","6e","10–12 Uhr","T",[[600,720]])]},
+ {id:"c161",nr:"C161 + C162",name:"Chemie",zone:"C",f:1,acts:[a("Märchenhafte Experimente","N","Projektkurs Q1","","T")]},
+ // 3. OG
+ {id:"b314",nr:"B314 + B315",name:"„Zollverein“",zone:"B",f:3,acts:[a("Anmeldung Klasse 5","I","","Termine à 30 Minuten, die SV begleitet Sie","T")]},
+ {id:"b305",nr:"B305–B312",name:"Oberstufe",zone:"B",f:3,acts:[a("Oberstufe: Beratung und Führung","I","","Begleitung ab dem Foyer","T")]},
+ {id:"c321",nr:"C321–C333",name:"Oberstufe",zone:"C",f:3,acts:[a("Oberstufe: Beratung und Führung","I","","Begleitung ab dem Foyer","T")]}
+];
+
+/* Bereiche im Plan (viewBox 1000 x 720) */
+var Z=[
+ {id:"C",label:"Bauteil C",sub:"Kunst & Technik",x:220,y:20,w:230,h:240,fl:[0,1,3]},
+ {id:"hofC",label:"Hof C",x:280,y:120,w:110,h:84,fl:[0],small:true},
+ {id:"TH",label:"Turnhallen",sub:"TH1 · TH2",x:470,y:20,w:150,h:240,fl:[0]},
+ {id:"aula",label:"Aula",x:660,y:62,w:145,h:110,fl:[0]},
+ {id:"mensa",label:"Mensa",x:820,y:62,w:145,h:110,fl:[0]},
+ {id:"foyer",label:"Foyer",sub:"Bühne · Stände",x:660,y:186,w:305,h:150,fl:[0]},
+ {id:"flur",label:"Flur",sub:"Gustav-Taler",x:660,y:350,w:305,h:66,fl:[0],small:true},
+ {id:"str",label:"Schulstraße",x:20,y:278,w:620,h:56,fl:[0],small:true},
+ {id:"D",label:"Bauteil D",sub:"Klassen 5 und 6",x:20,y:350,w:270,h:350,fl:[0,1,3]},
+ {id:"hofD",label:"D-Hof",x:80,y:520,w:150,h:96,fl:[0],small:true},
+ {id:"wd",label:"Winterdorf",sub:"Essen & Trinken",x:305,y:350,w:170,h:350,fl:[0]},
+ {id:"B",label:"Bauteil B",sub:"Küche · NW · Musik",x:490,y:350,w:200,h:260,fl:[0,1,3]},
+ {id:"park",label:"Parkplatz",x:720,y:500,w:260,h:110,fl:[0]}
+];
+var FILL={C:"#E6F5F2",hofC:"#DDF0DA",TH:"#F6EFD6",aula:"#F7E3EC",mensa:"#FBE6E2",foyer:"#EFE8FA",flur:"#F2F1EC",str:"#ECEAE3",D:"#E3ECFA",hofD:"#DDF0DA",wd:"#FBE6E2",B:"#E6F5F2",park:"#F2F1EC"};
+
+/* Zustand */
+var st={floor:0,win:null,cats:{},zone:null};
+Object.keys(CAT).forEach(function(k){st.cats[k]=true;});
+var favs={};
+try{favs=JSON.parse(localStorage.getItem("tdot26-favs")||"{}")||{};}catch(e){favs={};}
+function saveFavs(){try{localStorage.setItem("tdot26-favs",JSON.stringify(favs));}catch(e){}}
+
+/* Uhr: Live-Hinweise nur am Veranstaltungstag */
+function nowInfo(){
+  var d=new Date();
+  var isDay=d.getFullYear()===2026&&d.getMonth()===10&&d.getDate()===28;
+  return {isDay:isDay,min:d.getHours()*60+d.getMinutes()};
+}
+function hm(m){return Math.floor(m/60)+":"+("0"+(m%60)).slice(-2);}
+function liveState(act){
+  var n=nowInfo(); if(!n.isDay||!act.s) return "";
+  for(var i=0;i<act.s.length;i++){var s=act.s[i];
+    if(n.min>=s[0]&&n.min<s[1]) return "Läuft gerade";
+    if(n.min<s[0]) return "Nächster Start: "+hm(s[0])+" Uhr";}
+  return "";
+}
+function currentWin(){var n=nowInfo(); if(!n.isDay) return null;
+  for(var i=0;i<WIN.length;i++) if(n.min>=WIN[i].from&&n.min<WIN[i].to) return WIN[i].id; return null;}
+
+function actMatches(act){
+  if(!st.cats[act.c]) return false;
+  if(st.win&&act.w.indexOf(st.win)<0) return false;
+  return true;
+}
+function roomCount(r){return r.acts.filter(actMatches).length;}
+function zoneRooms(zid,f){return R.filter(function(r){return r.zone===zid&&r.f===f;});}
+function zoneCount(zid,f){return zoneRooms(zid,f).reduce(function(s,r){return s+roomCount(r);},0);}
+function floorName(f){for(var i=0;i<FLOORS.length;i++) if(FLOORS[i].id===f) return FLOORS[i].name; return "";}
+function zoneLabel(zid){for(var i=0;i<Z.length;i++) if(Z[i].id===zid) return Z[i]; return null;}
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c];});}
+
+/* Zeitfenster-Knöpfe */
+function renderWindows(){
+  var cw=currentWin(), el=document.getElementById("windows"), h="";
+  h+='<button class="win" type="button" data-win="" aria-pressed="'+(st.win===null)+'"><b>Alle Zeiten</b><span>10–17 Uhr</span></button>';
+  WIN.forEach(function(w){
+    h+='<button class="win" type="button" data-win="'+w.id+'" aria-pressed="'+(st.win===w.id)+'"><b>'+esc(w.name)+'</b><span>'+esc(w.time)+(cw===w.id?' <em class="live">jetzt</em>':'')+'</span></button>';
+  });
+  el.innerHTML=h;
+}
+document.getElementById("windows").addEventListener("click",function(e){
+  var b=e.target.closest(".win"); if(!b) return;
+  st.win=b.getAttribute("data-win")||null; renderAll();
+});
+
+/* Etagen */
+function renderFloors(){
+  var el=document.getElementById("floors"),h="";
+  FLOORS.forEach(function(f){
+    var c=R.filter(function(r){return r.f===f.id;}).reduce(function(s,r){return s+roomCount(r);},0);
+    h+='<button class="floor" role="tab" type="button" data-floor="'+f.id+'" aria-selected="'+(st.floor===f.id)+'">'+esc(f.name)+' <span class="vh">('+c+' Angebote)</span></button>';
+  });
+  el.innerHTML=h;
+  var c=R.filter(function(r){return r.f===st.floor;}).reduce(function(s,r){return s+roomCount(r);},0);
+  document.getElementById("floorhint").textContent=c+" Angebote auf dieser Etage";
+}
+document.getElementById("floors").addEventListener("click",function(e){
+  var b=e.target.closest(".floor"); if(!b) return;
+  st.floor=+b.getAttribute("data-floor"); renderAll();
+});
+
+/* Plan */
+function renderMap(){
+  var svg=document.getElementById("map"), h="";
+  h+='<g class="backdrop" aria-hidden="true"><rect x="640" y="20" width="340" height="410" rx="22"/><text x="660" y="50">Bauteil A</text></g>';
+  h+='<g aria-hidden="true"><text x="30" y="60" style="font-family:var(--font-display);font-size:34px;fill:var(--muted)">'+esc(floorName(st.floor))+'</text>'
+    +'<text x="30" y="100" style="font-size:20px;fill:var(--muted)">Bereich antippen</text></g>';
+  Z.forEach(function(z){
+    var onFloor=z.fl.indexOf(st.floor)>=0;
+    var n=onFloor?zoneCount(z.id,st.floor):0;
+    var off=!onFloor||n===0;
+    var fill=off?"#F4F3EE":FILL[z.id];
+    var cls="zone"+(off?" off":"")+(st.zone===z.id&&!off?" sel":"");
+    var label=z.label+(onFloor?"":" (nur EG)");
+    var attrs=off?' aria-hidden="true"':' role="button" tabindex="0" data-zone="'+z.id+'" aria-label="'+esc(z.label+", "+n+" Angebote")+'"';
+    h+='<g class="'+cls+'"'+attrs+'>';
+    h+='<rect class="body" x="'+z.x+'" y="'+z.y+'" width="'+z.w+'" height="'+z.h+'" rx="18" fill="'+fill+'"'+(off&&!onFloor?' stroke-dasharray="10 8"':'')+'/>';
+    var tx=z.x+16, ty=z.y+(z.small?z.h/2+12:46);
+    h+='<text class="zname" x="'+tx+'" y="'+ty+'" style="font-size:'+(z.small?30:40)+'px">'+esc(z.label)+'</text>';
+    if(z.sub&&!z.small&&onFloor) h+='<text class="zsub" x="'+tx+'" y="'+(ty+30)+'">'+esc(z.sub)+'</text>';
+    if(!off){
+      var cx=z.x+z.w-28, cy=z.y+28;
+      if(z.small){cx=z.x+z.w-30; cy=z.y+z.h/2;}
+      h+='<g class="badge"><circle cx="'+cx+'" cy="'+cy+'" r="22"/><text x="'+cx+'" y="'+(cy+8)+'" text-anchor="middle">'+n+'</text></g>';
+    }
+    h+='</g>';
+  });
+  svg.innerHTML=h;
+}
+function zoneFromEvent(e){var g=e.target.closest("[data-zone]"); return g?g.getAttribute("data-zone"):null;}
+document.getElementById("map").addEventListener("click",function(e){var z=zoneFromEvent(e); if(z) openZone(z,st.floor,null);});
+document.getElementById("map").addEventListener("keydown",function(e){
+  if(e.key!=="Enter"&&e.key!==" ") return; var z=zoneFromEvent(e); if(z){e.preventDefault(); openZone(z,st.floor,null);}
+});
+
+/* Kategorien */
+function renderCats(){
+  var el=document.getElementById("cats"),h="";
+  Object.keys(CAT).forEach(function(k){
+    h+='<button class="cat" type="button" data-cat="'+k+'" aria-pressed="'+st.cats[k]+'"><span class="dot" style="background:var(--c-'+k+')"></span>'+esc(CAT[k])+'</button>';
+  });
+  el.innerHTML=h;
+}
+document.getElementById("cats").addEventListener("click",function(e){
+  var b=e.target.closest(".cat"); if(!b) return; var k=b.getAttribute("data-cat");
+  var all=Object.keys(CAT).every(function(c){return st.cats[c];});
+  if(all){Object.keys(CAT).forEach(function(c){st.cats[c]=(c===k);});}
+  else{st.cats[k]=!st.cats[k]; if(!Object.keys(CAT).some(function(c){return st.cats[c];})) Object.keys(CAT).forEach(function(c){st.cats[c]=true;});}
+  renderAll();
+});
+
+/* Ein Angebot als HTML */
+function actHTML(r,act,i){
+  var key=r.id+"-"+i, wins=act.w.split("").map(function(w){for(var j=0;j<WIN.length;j++) if(WIN[j].id===w) return '<span>'+esc(WIN[j].name)+'</span>'; return "";}).join("");
+  var meta=[act.k,act.z].filter(Boolean).join(" · ");
+  var ls=liveState(act);
+  return '<div class="act"><span class="dot" style="background:var(--c-'+act.c+')" title="'+esc(CAT[act.c])+'"></span>'
+    +'<span class="t">'+esc(act.t)+'</span>'
+    +'<button class="fav" type="button" data-fav="'+key+'" aria-pressed="'+(!!favs[key])+'" aria-label="'+esc(act.t)+' merken">'+(favs[key]?"Gemerkt":"Merken")+'</button>'
+    +(meta?'<span class="m">'+esc(meta)+'</span>':'')
+    +'<span class="wins">'+wins+'</span>'
+    +(ls?'<span class="state">'+esc(ls)+'</span>':'')+'</div>';
+}
+function roomHTML(r,showAll){
+  var acts=r.acts.map(function(x,i){return {x:x,i:i};}).filter(function(o){return showAll||actMatches(o.x);});
+  if(!acts.length) return "";
+  return '<div class="room" id="room-'+r.id+'"><h3>'+esc(r.nr)+(r.name?' <small>'+esc(r.name)+'</small>':'')+'</h3>'
+    +acts.map(function(o){return actHTML(r,o.x,o.i);}).join("")+'</div>';
+}
+
+/* Schublade */
+var drawer=document.getElementById("drawer"), scrim=document.getElementById("scrim"), lastFocus=null;
+function openZone(zid,f,roomId,showAll){
+  st.zone=zid; st.floor=f; lastFocus=document.activeElement;
+  var z=zoneLabel(zid), rooms=zoneRooms(zid,f);
+  document.getElementById("dtitle").textContent=z?z.label:"";
+  var where=floorName(f)+(z&&z.sub?" · "+z.sub:"");
+  if(zid==="aula"||zid==="mensa"||zid==="foyer"||zid==="flur") where="Bauteil A · "+where;
+  document.getElementById("dwhere").textContent=where;
+  var h=rooms.map(function(r){return roomHTML(r,showAll);}).join("");
+  var hidden=rooms.reduce(function(s,r){return s+r.acts.length-roomCount(r);},0);
+  if(!h) h='<p class="empty">Zu Ihrer Auswahl gibt es hier gerade nichts.</p>';
+  if(hidden&&!showAll) h+='<button class="more" type="button" data-showall="1">'+hidden+' weitere Angebote ohne Filter zeigen</button>';
+  document.getElementById("dbody").innerHTML=h;
+  drawer.classList.add("open"); drawer.setAttribute("aria-hidden","false"); scrim.classList.add("open");
+  renderFloors(); renderMap();
+  if(roomId){var el=document.getElementById("room-"+roomId); if(el){el.scrollIntoView({block:"center"}); el.classList.remove("flash"); void el.offsetWidth; el.classList.add("flash");}}
+  else document.getElementById("dbody").scrollTop=0;
+  document.getElementById("dclose").focus({preventScroll:true});
+  var hash=roomId||zoneHash(zid,f); if(location.hash!=="#"+hash){try{history.replaceState(null,"","#"+hash);}catch(e){}}
+}
+function zoneHash(zid,f){
+  var map={foyer:"foyer",aula:"aula",mensa:"mensa",flur:"flur",wd:"winterdorf",TH:"turnhallen",str:"schulstrasse",park:"parkplatz",hofC:"hofc",hofD:"dhof"};
+  if(map[zid]) return map[zid];
+  return "bauteil-"+zid.toLowerCase()+"-"+(f===0?"eg":f===1?"og1":"og3");
+}
+function closeDrawer(){
+  drawer.classList.remove("open"); drawer.setAttribute("aria-hidden","true"); scrim.classList.remove("open");
+  st.zone=null; renderMap();
+  try{history.replaceState(null,"",location.pathname+location.search);}catch(e){}
+  if(lastFocus&&lastFocus.focus) lastFocus.focus({preventScroll:true});
+}
+document.getElementById("dclose").addEventListener("click",closeDrawer);
+scrim.addEventListener("click",closeDrawer);
+document.addEventListener("keydown",function(e){if(e.key==="Escape"&&drawer.classList.contains("open")) closeDrawer();});
+document.getElementById("dbody").addEventListener("click",function(e){
+  var m=e.target.closest("[data-showall]"); if(m){openZone(st.zone,st.floor,null,true); return;}
+});
+
+/* Merken (überall) */
+document.addEventListener("click",function(e){
+  var b=e.target.closest("[data-fav]"); if(!b) return;
+  var k=b.getAttribute("data-fav"); if(favs[k]) delete favs[k]; else favs[k]=1; saveFavs();
+  document.querySelectorAll('[data-fav="'+k+'"]').forEach(function(x){x.setAttribute("aria-pressed",String(!!favs[k])); x.textContent=favs[k]?"Gemerkt":"Merken";});
+  renderMine();
+});
+
+/* Raum öffnen per ID */
+function openRoom(id){
+  var r=R.filter(function(x){return x.id===id;})[0]; if(!r) return false;
+  openZone(r.zone,r.f,r.id,r.acts.every(function(x){return !actMatches(x);})); return true;
+}
+document.addEventListener("click",function(e){
+  var b=e.target.closest("[data-open]"); if(!b) return; e.preventDefault(); openRoom(b.getAttribute("data-open"));
+});
+
+/* Mein Rundgang */
+function firstStart(act){return act.s?act.s[0][0]:9999;}
+function renderMine(){
+  var items=[];
+  R.forEach(function(r){r.acts.forEach(function(x,i){if(favs[r.id+"-"+i]) items.push({r:r,x:x,i:i});});});
+  var sec=document.getElementById("mine");
+  sec.hidden=!items.length;
+  items.sort(function(p,q){return firstStart(p.x)-firstStart(q.x);});
+  document.getElementById("minerows").innerHTML=items.map(function(o){
+    return '<button class="row" type="button" data-open="'+o.r.id+'"><span class="top"><span class="dot" style="background:var(--c-'+o.x.c+')"></span><span class="nr">'+esc(o.x.t)+'</span></span>'
+      +'<span class="acts">'+esc(o.r.nr+" · "+floorName(o.r.f)+(o.x.z?" · "+o.x.z:""))+'</span></button>';
+  }).join("");
+}
+
+/* Liste aller Angebote */
+function renderList(){
+  var groups=[
+    {t:"Erdgeschoss · Foyer, Aula, Mensa",f:0,z:["foyer","flur","aula","mensa"]},
+    {t:"Erdgeschoss · Bauteil C",f:0,z:["C","hofC"]},
+    {t:"Erdgeschoss · Bauteil D",f:0,z:["D","hofD"]},
+    {t:"Erdgeschoss · Bauteil B",f:0,z:["B"]},
+    {t:"Draußen und Turnhallen",f:0,z:["wd","TH","str","park"]},
+    {t:"1. Obergeschoss",f:1,z:["D","B","C"]},
+    {t:"3. Obergeschoss",f:3,z:["B","C"]}
+  ];
+  var total=0, h="";
+  groups.forEach(function(g){
+    var rows="";
+    g.z.forEach(function(zid){zoneRooms(zid,g.f).forEach(function(r){
+      var acts=r.acts.filter(actMatches); if(!acts.length) return; total+=acts.length;
+      rows+='<button class="row" type="button" data-open="'+r.id+'"><span class="top"><span class="nr">'+esc(r.nr)+'</span>'+(r.name?'<span class="acts">'+esc(r.name)+'</span>':'')+'</span>'
+        +'<span class="acts">'+acts.map(function(x){return esc(x.t+(x.k?" ("+x.k+")":""));}).join(" · ")+'</span></button>';
+    });});
+    if(rows) h+='<div class="group"><h3>'+esc(g.t)+'</h3><div class="rows">'+rows+'</div></div>';
+  });
+  document.getElementById("list").innerHTML=h||'<p class="empty">Keine Angebote zu dieser Auswahl.</p>';
+  var w=st.win?WIN.filter(function(x){return x.id===st.win;})[0]:null;
+  document.getElementById("listhint").textContent=total+" Angebote"+(w?" bei „"+w.name+"“ ("+w.time+")":" über den ganzen Tag")+". Antippen öffnet den Raum im Plan.";
+}
+
+/* Suche */
+function norm(s){return String(s).toLowerCase().replace(/ä/g,"ae").replace(/ö/g,"oe").replace(/ü/g,"ue").replace(/ß/g,"ss");}
+var q=document.getElementById("q"), res=document.getElementById("results");
+q.addEventListener("input",function(){
+  var v=norm(q.value.trim()); if(v.length<2){res.innerHTML=""; return;}
+  var hits=[];
+  R.forEach(function(r){
+    var roomHay=norm(r.nr+" "+r.name);
+    r.acts.forEach(function(x){
+      if(roomHay.indexOf(v)>=0||norm(x.t+" "+x.k).indexOf(v)>=0) hits.push({r:r,x:x});
+    });
+  });
+  res.innerHTML=hits.slice(0,8).map(function(o){
+    return '<li><button type="button" data-open="'+o.r.id+'"><span class="dot" style="background:var(--c-'+o.x.c+')"></span><span>'+esc(o.x.t)+(o.x.k?' <span style="color:var(--muted)">('+esc(o.x.k)+')</span>':'')+'</span><span class="where">'+esc(o.r.nr+" · "+floorName(o.r.f))+'</span></button></li>';
+  }).join("")||'<li><span style="display:block;padding:10px 14px;color:var(--muted)">Nichts gefunden. Versuchen Sie einen Raum wie „D070“ oder eine Klasse wie „5b“.</span></li>';
+});
+
+function renderAll(){renderWindows(); renderFloors(); renderMap(); renderCats(); renderList(); renderMine();
+  if(drawer.classList.contains("open")&&st.zone) openZone(st.zone,st.floor,null);}
+
+/* Direktlinks: #d070, #foyer, #winterdorf … (z. B. für QR-Codes an Türen) */
+function fromHash(){
+  var h=(location.hash||"").replace("#","").toLowerCase(); if(!h) return;
+  if(openRoom(h)) return;
+  var alias={turnhallen:"th1",schulstrasse:"schulstrasse",parkplatz:"parkplatz",hofc:"hofc",dhof:"dhof",winterdorf:"winterdorf"};
+  if(alias[h]&&openRoom(alias[h])) return;
+  var m=h.match(/^bauteil-([bcd])-(eg|og1|og3)$/);
+  if(m) openZone(m[1].toUpperCase(),m[2]==="eg"?0:m[2]==="og1"?1:3,null);
+}
+window.addEventListener("hashchange",fromHash);
+
+st.win=currentWin();
+renderAll();
+fromHash();
+})();
+</script>
+</body>
+</html>
