@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Wo ist was? Tag der offenen Tür (Copy)</title>
+<title>Wo ist was? Tag der offenen Tür</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Gochi+Hand&display=swap" rel="stylesheet">
@@ -130,6 +130,23 @@ h2{margin:8px 0 0;font-family:var(--font-display);font-weight:400;font-size:34px
 .fav{border:2px solid var(--ink);background:#fff;border-radius:10px;min-width:44px;min-height:40px;cursor:pointer;font-size:13px;font-weight:700;padding:0 8px}
 .fav[aria-pressed="true"]{background:var(--sun)}
 .more{border:0;background:none;color:var(--gusti-deep);font-weight:700;text-decoration:underline;cursor:pointer;padding:0;align-self:flex-start}
+.wdmap{display:block;width:100%;max-width:380px;height:auto;margin:2px auto 0}
+.wd-bldg{fill:var(--dim);stroke:var(--ink);stroke-width:2}
+.wd-yard{fill:#FBF6EA;stroke:var(--ink);stroke-width:2}
+.wd-bed{fill:#CFE6C6;stroke:#4E8A40;stroke-width:2}
+.wd-seat{fill:#F1E2CF;stroke:#9A6A3A;stroke-width:1.5;stroke-dasharray:4 3}
+.wd-lbl{font-family:var(--font-display);font-size:20px;fill:var(--ink)}
+.wd-small{font-size:12px;fill:var(--muted)}
+.wd-arrow{stroke:#2E7D32;stroke-width:3;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.stall{cursor:pointer}
+.stall rect{fill:#F6E3B4;stroke:#9A6A00;stroke-width:2.5}
+.stall:hover rect,.stall.sel rect{fill:var(--sun);stroke:var(--ink)}
+.stall:focus{outline:none}
+.stall:focus-visible rect{stroke:var(--ember);stroke-width:5}
+.st-n{font-weight:700;font-size:19px;fill:var(--ink);pointer-events:none}
+.st-k{font-size:11px;fill:var(--ink);pointer-events:none}
+.wdnote{margin:0;font-size:14px;color:var(--muted)}
+.act.flash{animation:flash 1.4s ease-out;border-radius:8px}
 .scrim{position:fixed;inset:0;background:rgba(29,29,27,.25);z-index:15;display:none}
 .scrim.open{display:block}
 @media (min-width:900px){.scrim{display:none!important}}
@@ -143,7 +160,7 @@ footer{font-size:13px;color:var(--muted);border-top:2px dashed var(--ink);paddin
     <div class="banner">Tag der offenen Tür · Samstag, 28. November 2026</div>
     <div>
       <h1>Wo ist was?</h1>
-      <p>Tippen Sie auf einen Bereich im Plan. Dann sehen Sie, was dort wann passiert.</p>
+      <p>Tippt auf einen Bereich im Plan. Dann seht ihr, was dort wann passiert.</p>
     </div>
     <img src="gusti.png" alt="Gusti, das Schulmaskottchen, mit einem Buch in der Hand">
   </header>
@@ -154,7 +171,7 @@ footer{font-size:13px;color:var(--muted);border-top:2px dashed var(--ink);paddin
 
   <section class="search" role="search">
     <label for="q">Suchen nach Angebot, Klasse oder Raum</label>
-    <input id="q" type="search" placeholder="z. B. Slime, 5b, Waffeln, D070" autocomplete="off">
+    <input id="q" type="search" placeholder="z. B. Slime, 5b, Waffeln, D180" autocomplete="off">
     <ul class="results" id="results" aria-live="polite"></ul>
   </section>
 
@@ -176,16 +193,21 @@ footer{font-size:13px;color:var(--muted);border-top:2px dashed var(--ink);paddin
     <h2>Gut zu wissen</h2>
     <div class="tips">
       <div class="tip rally">
-        <b>Für Viertklässler: die Fantasiewesen-Rallye</b>
+        <b>Gustavs Fantasie-Abenteuer</b>
         <div class="stamps" aria-label="Stempel G U S T A V"><span>G</span><span>U</span><span>S</span><span>T</span><span>A</span><span>V</span></div>
-        <p>Start an der Bühne im Foyer. Die Kinder gehen durch das große Buch und den geheimen Gang, holen sich eine Stempelkarte und besuchen mit der SV verschiedene Aktionen. Wer alle sechs Stempel hat, bekommt an der Fantasiewesen-Station ein Fantasiewesen. Dauer etwa 1,5 Stunden.</p>
+        <p>Für Viertklässler, Start direkt nach der Begrüßung an der Bühne im Foyer, ca. 1,5 Stunden. Schreib deinen Gustav-Wunsch auf oder male Gusti aus, kleb ihn ans riesige Buch und ab durch den geheimen Gang! Dort wartet deine Stempelkarte, die SV begleitet dich durch die Aktionsräume. Alle Stempel gesammelt? Dann ab zur Fantasiewesen-Station im Foyer neben MADE+.</p>
+        <p><b style="font-size:15px">Liebe Eltern:</b> In dieser Zeit könnt ihr euch in Ruhe umsehen und informieren.</p>
         <button type="button" data-open="foyer">Zur Bühne im Foyer</button>
       </div>
-      <div class="tip"><b>Bezahlen mit Gustav-Talern</b><p>An den Ständen wird nicht bar bezahlt. Taler gibt es an zwei Tischen im Flur und in der Mensa, 9:30–14:30 Uhr.</p><button type="button" data-open="flur">Taler-Stände zeigen</button></div>
-      <div class="tip"><b>Anmeldung Klasse 5</b><p>Im Raum „Zollverein“ (3. OG, B314/B315), in Terminen à 30 Minuten. Schülerinnen und Schüler der SV begleiten Sie hin.</p><button type="button" data-open="b314">Im Plan zeigen</button></div>
-      <div class="tip"><b>Kinderbetreuung</b><p>Für jüngere Geschwister: Raum B041, 10–14 Uhr, betreut von der Klasse 10D.</p><button type="button" data-open="b041">Im Plan zeigen</button></div>
-      <div class="tip"><b>Erste Hilfe</b><p>Der Sanitätsdienst der Schule ist in Raum D070.</p><button type="button" data-open="d070">Im Plan zeigen</button></div>
-      <div class="tip"><b>Wintertheater</b><p>Gustav verzaubert! Ab 14:30 Uhr in der Aula. Karten an der Kasse im Foyer.</p><button type="button" data-open="aula">Zur Aula</button></div>
+      <div class="tip"><b>Gustav-Taler</b><p>An allen Ständen zahlt ihr mit Gustav-Talern (1 Taler = 0,50 €). Wechsel im Flur und in der Mensa, 9:30–14:30 Uhr.</p><button type="button" data-open="flur">Wechselstelle im Flur zeigen</button></div>
+      <div class="tip"><b>Anmeldung Klasse 5</b><p>Vortrag in D180, je 30 Minuten um 10:15, 10:45, 11:15 und 11:45 Uhr. Treffpunkt ist das Foyer, die SV bringt euch hin.</p><button type="button" data-open="d180">Im Plan zeigen</button></div>
+      <div class="tip"><b>Unser Gesamtschul-Konzept</b><p>Vom Schulleiter erklärt: A111, 10:30–10:50 Uhr.</p><button type="button" data-open="a111">Im Plan zeigen</button></div>
+      <div class="tip"><b>Winterdorf</b><p>Zehn Stände im Hof zwischen Bauteil D und B, mit Sitzplätzen. Im Plan seht ihr, welcher Stand was anbietet.</p><button type="button" data-open="winterdorf">Winterdorf-Plan zeigen</button></div>
+      <div class="tip"><b>Den Weg finden</b><p>Lebende Schilder (7a) und SV-Guides auf der Schulstraße helfen euch. Führungen starten vorne im Foyer.</p><button type="button" data-open="schulstrasse">Schulstraße zeigen</button></div>
+      <div class="tip"><b>Kinderbetreuung</b><p>Raum B041, 10–14 Uhr.</p><button type="button" data-open="b041">Im Plan zeigen</button></div>
+      <div class="tip"><b>Erste Hilfe</b><p>Schulsanitätsdienst in C053.</p><button type="button" data-open="c053">Im Plan zeigen</button></div>
+      <div class="tip"><b>Aufzug</b><p>Unsere Oberstufe hilft euch gern.</p></div>
+      <div class="tip"><b>Wintertheater</b><p>Gustav verzaubert! Ab 14:30 Uhr in der Aula. Karten gibt es an der Kasse im Foyer.</p><button type="button" data-open="aula">Zur Aula</button></div>
     </div>
   </section>
 
@@ -195,7 +217,7 @@ footer{font-size:13px;color:var(--muted);border-top:2px dashed var(--ink);paddin
     <div class="list" id="list"></div>
   </section>
 
-  <footer>Schematischer Plan, nicht maßstabsgetreu. Klassenräume sind voraussichtlich bis 12 Uhr geöffnet. Stand: 22.11.2026.</footer>
+  <footer>Gustis Tipp: Die Klassenräume sind bis 12 Uhr geöffnet, danach geht’s zum Schulfest! · Schematischer Plan, nicht maßstabsgetreu · Stand: 26.11.2026 · Wir freuen uns auf euch! Gustav-Heinemann-Gesamtschule Essen</footer>
 </div>
 
 <div class="scrim" id="scrim"></div>
@@ -216,108 +238,114 @@ var WIN=[
   {id:"S",name:"Gustav feiert!",time:"12–14:30 Uhr",from:720,to:870},
   {id:"W",name:"Gustav verzaubert!",time:"ab 14:30 Uhr",from:870,to:1020}
 ];
-var FLOORS=[{id:0,name:"Erdgeschoss"},{id:1,name:"1. OG"},{id:3,name:"3. OG"}];
+var FLOORS=[{id:0,name:"Erdgeschoss"},{id:1,name:"1. OG"},{id:3,name:"3. Etage"}];
 
 /* a(Titel, Kategorie, Klasse, Zeittext, Zeitfenster, Slots[[von,bis] in Minuten], Hinweis) */
-function a(t,c,k,z,w,s,n){return {t:t,c:c,k:k||"",z:z||"",w:w,s:s||null,n:n||""};}
+function a(t,c,k,z,w,s,n,st){return {t:t,c:c,k:k||"",z:z||"",w:w,s:s||null,n:n||"",st:st||0};}
 var R=[
  // Bauteil A, EG
  {id:"foyer",nr:"Foyer",name:"Bühne und Info-Stände",zone:"foyer",f:0,acts:[
-   a("Begrüßung mit Musik","B","","Bühne","T"),
-   a("Musikpräsentationen","B","","Bühne","S"),
-   a("Start der Fantasiewesen-Rallye","I","für Viertklässler","an der Bühne","T"),
-   a("Führungen durch die Schule","I","Sek II","Treffpunkt Foyer vorne","T"),
-   a("Oberstufe: Info und Begleitung in die 3. Etage","I","","","T"),
-   a("Info 9er / 10er","I","","","T"),
-   a("Info Ganztag","I","","","T"),
-   a("Europaschule","I","Sek II","","T"),
+   a("Musikalische Begrüßung zum Start","B","","Foyer-Bühne","T"),
+   a("Start von Gustavs Fantasie-Abenteuer","I","für Viertklässler","direkt nach der Begrüßung an der Bühne, ca. 1,5 Stunden","T"),
+   a("Musik unserer Klassen","B","","Foyer-Bühne, 12–14:30 Uhr","S",[[720,870]]),
+   a("Führungen durch die Schule","I","","Start vorne im Foyer","T"),
+   a("Oberstufe: Infos zur Anmeldung, Beratung und Führung in der 3. Etage","I","","","T"),
+   a("Infos Klasse 9/10","I","","","T"),
+   a("Ganztag","I","","","T"),
+   a("Europaschule","I","","","T"),
    a("Förderverein","I","","","T"),
-   a("Infos zum Schulsportverein","S","","","T"),
-   a("Infos zur JuB","I","","","T"),
-   a("SV-Arbeit und Ideenbaum zur Demokratiebildung","I","SV","","T"),
-   a("Vorstellung BUS-Klasse und Preisausgabe Fantasiewesen","I","9g","neben Made+","T"),
-   a("Schülerfirma Made+","K","","auch in C052, vor dem Wintertheater","T"),
+   a("Schülerfirma MADE+","K","","auch in C052","T"),
+   a("BUS-Klasse und Fantasiewesen-Station","I","9g","neben MADE+","T"),
+   a("Schulsportverein","S","","","T"),
+   a("SV und Ideenbaum zur Demokratie","I","SV","","T"),
+   a("JuB","I","","","T"),
    a("Kasse Wintertheater","O","","","TSW")]},
- {id:"aula",nr:"Aula",name:"",zone:"aula",f:0,acts:[a("Wintertheater","B","","ab 14:30 Uhr","W",[[870,1020]])]},
+ {id:"aula",nr:"Aula",name:"",zone:"aula",f:0,acts:[a("Gustav verzaubert! Wintertheater","B","","ab 14:30 Uhr, Karten an der Kasse im Foyer","W",[[870,1020]])]},
  {id:"mensa",nr:"Mensa",name:"Elterncafé",zone:"mensa",f:0,acts:[
-   a("Waffeln","E","Elternvertretung","","TS"),
-   a("Gustav-Taler Stand 3","O","","9:30–14:30 Uhr","TS",[[570,870]])]},
- {id:"flur",nr:"Flur",name:"am Foyer",zone:"flur",f:0,acts:[
-   a("Gustav-Taler Stand 1 und 2","O","","9:30–14:30 Uhr","TS",[[570,870]]),
-   a("Allgemeine Info","I","10E","","T"),
+   a("Waffeln im Elterncafé","E","Elternvertretung","","TS"),
+   a("Gustav-Taler-Wechsel","O","","9:30–14:30 Uhr","TS",[[570,870]])]},
+ {id:"flur",nr:"Flur",name:"",zone:"flur",f:0,acts:[
+   a("Gustav-Taler-Wechsel","O","","9:30–14:30 Uhr","TS",[[570,870]]),
    a("Streitschlichtung","I","","","T"),
-   a("Lebende Schilder helfen beim Weg","O","7a","","T")]},
+   a("Allgemeine Infos","I","10E","","T")]},
  // Bauteil C, EG
- {id:"c045",nr:"C045 + C046",name:"Kunsträume",zone:"C",f:0,acts:[a("Zufallswerkstatt – Kunst zum Mitnehmen","K","","","T")]},
- {id:"c047",nr:"C047",name:"Kunstraum",zone:"C",f:0,acts:[a("Buchstaben in Fluchtpunktperspektive","K","10B","","T")]},
- {id:"c049",nr:"C049",name:"Technikraum",zone:"C",f:0,acts:[a("Lesezeichen-Workshop","K","8E","","T")]},
- {id:"c052",nr:"C052",name:"",zone:"C",f:0,acts:[a("Schülerfirma Made+","K","","","T")]},
- {id:"c053",nr:"C053",name:"Technikraum",zone:"C",f:0,acts:[a("Henna-Tattoos","K","Q2","","T")]},
- {id:"c054",nr:"C054",name:"Technikraum",zone:"C",f:0,acts:[a("Dekofiguren aus Chenilledraht","K","7E","","T")]},
- {id:"c055",nr:"C055",name:"Kunstraum",zone:"C",f:0,acts:[a("Slime selbst machen","K","9D","10–12 Uhr","T",[[600,720]])]},
- {id:"c057",nr:"C057",name:"",zone:"C",f:0,acts:[a("Schulsozialarbeit stellt sich vor","I","","","T")]},
- {id:"hofc",nr:"Innenhof C",name:"",zone:"hofC",f:0,acts:[a("Dosenwerfen","S","7B","","T")]},
+ {id:"c045",nr:"C045/046",name:"",zone:"C",f:0,acts:[a("Zufallswerkstatt – Kunst zum Mitnehmen","K","","10–12 Uhr","T",[[600,720]])]},
+ {id:"c047",nr:"C047",name:"",zone:"C",f:0,acts:[a("Buchstaben in Fluchtpunktperspektive","K","10B","10–12 Uhr","T",[[600,720]])]},
+ {id:"c049",nr:"C049",name:"",zone:"C",f:0,acts:[a("Lesezeichen-Workshop","K","8E","10–12 Uhr","T",[[600,720]])]},
+ {id:"c052",nr:"C052",name:"",zone:"C",f:0,acts:[a("Schülerfirma MADE+","K","","","T")]},
+ {id:"c053",nr:"C053",name:"",zone:"C",f:0,acts:[a("Erste Hilfe: Schulsanitätsdienst","O","","","TSW")]},
+ {id:"c054",nr:"C054",name:"",zone:"C",f:0,acts:[a("Weihnachtliche Figuren aus Pfeifenreinigern","K","7E","10–12 Uhr","T",[[600,720]])]},
+ {id:"c055",nr:"C055",name:"",zone:"C",f:0,acts:[a("Slime selbst machen","K","9D","10–12 Uhr","T",[[600,720]])]},
+ {id:"c057",nr:"C057",name:"",zone:"C",f:0,acts:[a("Schulsozialarbeit","I","","","T")]},
+ {id:"flurc057",nr:"Flur C057",name:"",zone:"C",f:0,acts:[a("SV – Schüler helfen Schülern","I","SV","","T")]},
+ {id:"hofc",nr:"C-Hof",name:"",zone:"hofC",f:0,acts:[a("Dosenwerfen","S","7B","10–12 Uhr","T",[[600,720]])]},
  // Bauteil D, EG
- {id:"d065",nr:"D065",name:"",zone:"D",f:0,acts:[a("Escape Room NW / Mathe","U","6A","10–12 Uhr","T",[[600,720]])]},
- {id:"d066",nr:"D066",name:"",zone:"D",f:0,acts:[a("Offener Unterricht Erdkunde","U","6b","10–12 Uhr","T",[[600,720]])]},
- {id:"d067",nr:"D067",name:"",zone:"D",f:0,acts:[a("SV und „Schüler helfen Schülern“","I","SV","","T")]},
- {id:"d068",nr:"D068",name:"Inklusion",zone:"D",f:0,acts:[a("Inklusion und Teambahn","I","","","T")]},
- {id:"d070",nr:"D070",name:"",zone:"D",f:0,acts:[a("Bilingualer Unterricht Englisch: Infowand und Ausstellung","I","7D","","T"),a("Sanitätsdienst (Erste Hilfe)","O","","","TSW")]},
- {id:"d071",nr:"D071",name:"",zone:"D",f:0,acts:[a("Gedankenwerkstatt im Drachenreich (Philosophie)","K","","","T")]},
- {id:"d073",nr:"D073",name:"",zone:"D",f:0,acts:[a("Offener Unterricht Mathe","U","6d","10–12 Uhr","T",[[600,720]])]},
- {id:"d073d",nr:"D073 (Diff)",name:"",zone:"D",f:0,acts:[a("Sprachen: Türkisch (HSU und WP), Französisch, Spanisch","I","","","T")]},
- {id:"d074",nr:"D074",name:"",zone:"D",f:0,acts:[a("Mandalas malen","K","8F","","T")]},
- {id:"d075",nr:"D075",name:"",zone:"D",f:0,acts:[a("Spielewelt","K","8B","","T")]},
- {id:"d076",nr:"D076",name:"",zone:"D",f:0,acts:[a("Offener Unterricht Erdkunde","U","6g","10–12 Uhr","T",[[600,720]])]},
- {id:"dhof",nr:"D-Hof",name:"ggf. A/B-Hof",zone:"hofD",f:0,acts:[a("Gemüseackerdemie: Kräutersalz und Vogelfutterringe","N","8a","","TS")]},
+ {id:"d065",nr:"D065",name:"",zone:"D",f:0,acts:[a("Escape Room NW/Mathe","U","6a","10–12 Uhr","T",[[600,720]])]},
+ {id:"d066",nr:"D066",name:"",zone:"D",f:0,acts:[a("Erdkunde","U","6b","10–12 Uhr","T",[[600,720]])]},
+ {id:"d068",nr:"D068",name:"",zone:"D",f:0,acts:[a("Inklusion & Teambahn","I","","","T")]},
+ {id:"d070",nr:"D070",name:"",zone:"D",f:0,acts:[a("Sprachen: Türkisch, Französisch, Spanisch","I","","","T")]},
+ {id:"d072",nr:"D072",name:"",zone:"D",f:0,acts:[a("Englisch bilingual: Infowand & Ausstellung","I","7D","","T")]},
+ {id:"d073",nr:"D073",name:"",zone:"D",f:0,acts:[a("Mathe","U","6d","10–12 Uhr","T",[[600,720]])]},
+ {id:"d074",nr:"D074",name:"",zone:"D",f:0,acts:[a("Mandalas malen","K","8F","10–12 Uhr","T",[[600,720]])]},
+ {id:"d075",nr:"D075",name:"",zone:"D",f:0,acts:[a("Spielewelt","K","8B","10–12 Uhr","T",[[600,720]])]},
+ {id:"d076",nr:"D076",name:"",zone:"D",f:0,acts:[a("Erdkunde","U","6g","10–12 Uhr","T",[[600,720]])]},
+ {id:"dhof",nr:"D-Hof",name:"",zone:"hofD",f:0,acts:[a("Gemüseackerdemie","N","8a","auch auf dem Schulfest","TS",[[600,870]])]},
  // Bauteil B, EG
- {id:"b029",nr:"B029",name:"Schulküche",zone:"B",f:0,acts:[a("Gustav Limo-Labor","N","","10–13:30 Uhr","TS",[[600,810]])]},
+ {id:"b029",nr:"B029",name:"Schulküche",zone:"B",f:0,acts:[a("Gustav-Limo-Labor","N","","10–13:30 Uhr","TS",[[600,810]])]},
  {id:"b032",nr:"B032",name:"Informatik",zone:"B",f:0,acts:[a("Roboter","N","9F","","T")]},
- {id:"b040",nr:"B040",name:"Bandraum",zone:"B",f:0,acts:[a("Offener Profilunterricht Bandklasse","U","5d","10:50–11:20 Uhr","T",[[650,680]])]},
- {id:"b041",nr:"B041",name:"",zone:"B",f:0,acts:[a("Kinderbetreuung für Geschwister","O","10D","10–14 Uhr","TS",[[600,840]])]},
+ {id:"b040",nr:"B040",name:"",zone:"B",f:0,acts:[a("Bandklasse","U","5d","10:50–11:20 Uhr","T",[[650,680]])]},
+ {id:"b041",nr:"B041",name:"",zone:"B",f:0,acts:[a("Kinderbetreuung","O","","10–14 Uhr","TS",[[600,840]])]},
  // Außen
- {id:"winterdorf",nr:"Winterdorf",name:"Innenhof zwischen B und D",zone:"wd",f:0,acts:[
-   a("Sandwichtoast","E","8D","","TS"),a("Dessert im Becher","E","9C","","TS"),a("Internationale Backwaren","E","7F","","TS"),
-   a("Kinderpunsch und Kakao","E","10F","","TS"),a("Hot Dogs","E","10A","","TS"),a("Zuckerwatte","E","9E und SV","","TS"),
-   a("Sandwich","E","9B","","S"),a("Süßigkeitentüten","E","6f","","TS"),a("Candy Bar und Snacks","E","8C","","TS"),a("Süße und salzige Speisen","E","7C","","TS")]},
+ {id:"winterdorf",nr:"Winterdorf",name:"Hof zwischen Bauteil D und B",zone:"wd",f:0,plan:"wd",acts:[
+   a("Hot Dogs","E","10A","Stand 1","TS",null,"",1),
+   a("Kinderpunsch & Kakao","E","10F","Stand 2","TS",null,"",2),
+   a("Candy Bar & Snacks","E","8C","Stand 3","TS",null,"",3),
+   a("Dessert im Becher","E","9C","Stand 4","TS",null,"",4),
+   a("Internationale Backwaren","E","7F","Stand 5","TS",null,"",5),
+   a("Sandwich","E","9B","Stand 6","TS",null,"",6),
+   a("Süße & salzige Speisen","E","7C","Stand 7","TS",null,"",7),
+   a("Süßigkeitentüten","E","6f","Stand 8","TS",null,"",8),
+   a("Sandwichtoast","E","8D","Stand 9","TS",null,"",9),
+   a("Zuckerwatte","E","SV + 9E","Stand 10","TS",null,"",10)]},
  {id:"th1",nr:"TH1",name:"Turnhalle 1",zone:"TH",f:0,acts:[a("Miniolympiade","S","","","T")]},
- {id:"th2",nr:"TH2",name:"Turnhalle 2",zone:"TH",f:0,acts:[a("Bewegungslandschaft und Sporthelfer:innen","S","ES Sport und Gesundheit","","T")]},
- {id:"schulstrasse",nr:"Schulstraße",name:"",zone:"str",f:0,acts:[a("SV-Guides für Eltern","I","SV","","T"),a("SV-Guides für Kinder","I","SV","","T")]},
- {id:"parkplatz",nr:"Parkplatz",name:"",zone:"park",f:0,acts:[a("Parkplatzdienst weist ein","O","10C","10–14 Uhr","TS",[[600,840]])]},
+ {id:"th2",nr:"TH2",name:"Turnhalle 2",zone:"TH",f:0,acts:[a("Bewegungslandschaft & Sporthelfer*innen","S","","","T")]},
+ {id:"schulstrasse",nr:"Schulstraße",name:"",zone:"str",f:0,acts:[a("SV-Guides helfen beim Weg","I","SV","","T"),a("Lebende Schilder","O","7a","","T")]},
+ {id:"parkplatz",nr:"Parkplatz",name:"",zone:"park",f:0,acts:[a("Parkplatzdienst","O","10C","10–14 Uhr","TS",[[600,840]])]},
  // 1. OG
- {id:"d169",nr:"D169",name:"",zone:"D",f:1,acts:[a("Oobleck und klebende Knetballons","N","5a","10–13 Uhr, 3 Gruppen à 1 Stunde","TS",[[600,780]])]},
- {id:"d170",nr:"D170",name:"",zone:"D",f:1,acts:[a("Offener Unterricht Englisch","U","5b","10–12 Uhr","T",[[600,720]]),a("Offener Unterricht Mathe","U","5b","10–12 Uhr","T",[[600,720]])]},
- {id:"d171",nr:"D171",name:"",zone:"D",f:1,acts:[a("Interaktive Mini-Games Deutsch","U","5c","10:15–10:45 und 11:00–11:30 Uhr","T",[[615,645],[660,690]])]},
- {id:"d177",nr:"D177",name:"",zone:"D",f:1,acts:[a("Info: Was ist eine Gesamtschule?","I","","10:30–10:50 Uhr","T",[[630,650]])]},
- {id:"d178",nr:"D178",name:"",zone:"D",f:1,acts:[a("Offener Unterricht zu Märchen","U","5d","10:00–10:50 und 11:20–12:00 Uhr","T",[[600,650],[680,720]])]},
- {id:"d179",nr:"D179",name:"",zone:"D",f:1,acts:[a("Quiz-Time Englisch","U","5e","10:30–10:50 Uhr","T",[[630,650]]),a("GL-Quiz","U","5e","11:00–11:20 Uhr","T",[[660,680]])]},
- {id:"d180",nr:"D180",name:"",zone:"D",f:1,acts:[a("Offener Unterricht Deutsch: Lektüre in Gruppen","U","5f","10:30–12:30 Uhr, 2 Gruppen à 1 Stunde","TS",[[630,750]])]},
- {id:"b143",nr:"B143 + B144",name:"Biologie",zone:"B",f:1,acts:[a("Mikroskopieren","N","6c und 9a","10–12 Uhr","T",[[600,720]])]},
- {id:"b146",nr:"B146",name:"Biologie",zone:"B",f:1,acts:[a("Chromatographie zum Mitmachen","N","6e","10–12 Uhr","T",[[600,720]])]},
- {id:"c161",nr:"C161 + C162",name:"Chemie",zone:"C",f:1,acts:[a("Märchenhafte Experimente","N","Projektkurs Q1","","T")]},
+ {id:"a111",nr:"A111",name:"",zone:"A",f:1,acts:[a("Unser Gesamtschul-Konzept – vom Schulleiter erklärt","I","","10:30–10:50 Uhr","T",[[630,650]])]},
+ {id:"d169",nr:"D169",name:"",zone:"D",f:1,acts:[a("Oobleck & klebende Knetballons","N","5a","Start um 10, 11 und 12 Uhr","TS",[[600,780]])]},
+ {id:"d170",nr:"D170",name:"",zone:"D",f:1,acts:[a("Englisch und Mathe","U","5b","10–12 Uhr","T",[[600,720]])]},
+ {id:"d171",nr:"D171",name:"",zone:"D",f:1,acts:[a("Mini-Games Deutsch","U","5c","10:15 und 11:00 Uhr","T",[[615,645],[660,690]])]},
+ {id:"d174",nr:"D174",name:"",zone:"D",f:1,acts:[a("Gedankenwerkstatt im Drachenreich (Philosophie)","K","","10–12 Uhr","T",[[600,720]])]},
+ {id:"d177",nr:"D177",name:"",zone:"D",f:1,acts:[a("Deutsch: Lektüre-Gruppenarbeit","U","5f","10:30 und 11:30 Uhr","T",[[630,690],[690,750]])]},
+ {id:"d178",nr:"D178",name:"",zone:"D",f:1,acts:[a("Märchen (Deutsch)","U","5d","10–10:50 und 11:20–12 Uhr","T",[[600,650],[680,720]])]},
+ {id:"d179",nr:"D179",name:"",zone:"D",f:1,acts:[a("Quiz-Time Englisch / GL-Quiz","U","5e","10:30 und 11:00 Uhr","T",[[630,650],[660,680]])]},
+ {id:"d180",nr:"D180",name:"",zone:"D",f:1,acts:[a("Vortrag zur Anmeldung für die Klasse 5","I","","je 30 Min. um 10:15, 10:45, 11:15 und 11:45 Uhr · Treffpunkt Foyer, die SV bringt euch hin","T",[[615,645],[645,675],[675,705],[705,735]])]},
+ {id:"b143",nr:"B143/144",name:"",zone:"B",f:1,acts:[a("Mikroskopieren","N","6c und 9a","10–12 Uhr","T",[[600,720]])]},
+ {id:"b146",nr:"B146",name:"",zone:"B",f:1,acts:[a("Farben trennen: Chromatographie","N","6e","10–12 Uhr","T",[[600,720]])]},
+ {id:"c161",nr:"C161/162",name:"",zone:"C",f:1,acts:[a("Märchenhafte Experimente","N","Q1","","T")]},
  // 3. OG
- {id:"b314",nr:"B314 + B315",name:"„Zollverein“",zone:"B",f:3,acts:[a("Anmeldung Klasse 5","I","","Termine à 30 Minuten, die SV begleitet Sie","T")]},
- {id:"b305",nr:"B305–B312",name:"Oberstufe",zone:"B",f:3,acts:[a("Oberstufe: Beratung und Führung","I","","Begleitung ab dem Foyer","T")]},
- {id:"c321",nr:"C321–C333",name:"Oberstufe",zone:"C",f:3,acts:[a("Oberstufe: Beratung und Führung","I","","Begleitung ab dem Foyer","T")]}
+ {id:"ober",nr:"3. Etage",name:"Oberstufe",zone:"C",f:3,acts:[a("Oberstufe: Beratung & Führung","I","","Start am Oberstufen-Stand im Foyer","T")]}
 ];
 
 /* Bereiche im Plan (viewBox 1000 x 720) */
 var Z=[
  {id:"C",label:"Bauteil C",sub:"Kunst & Technik",x:220,y:20,w:230,h:240,fl:[0,1,3]},
- {id:"hofC",label:"Hof C",x:280,y:120,w:110,h:84,fl:[0],small:true},
+ {id:"hofC",label:"C-Hof",x:280,y:120,w:110,h:84,fl:[0],small:true},
  {id:"TH",label:"Turnhallen",sub:"TH1 · TH2",x:470,y:20,w:150,h:240,fl:[0]},
- {id:"aula",label:"Aula",x:660,y:62,w:145,h:110,fl:[0]},
- {id:"mensa",label:"Mensa",x:820,y:62,w:145,h:110,fl:[0]},
- {id:"foyer",label:"Foyer",sub:"Bühne · Stände",x:660,y:186,w:305,h:150,fl:[0]},
- {id:"flur",label:"Flur",sub:"Gustav-Taler",x:660,y:350,w:305,h:66,fl:[0],small:true},
+ {id:"A",label:"Bauteil A",sub:"Gesamtschul-Konzept",x:660,y:62,w:305,h:354,fl:[1]},
+ {id:"aula",inA:true,label:"Aula",x:660,y:62,w:145,h:110,fl:[0]},
+ {id:"mensa",inA:true,label:"Mensa",x:820,y:62,w:145,h:110,fl:[0]},
+ {id:"foyer",inA:true,label:"Foyer",sub:"Bühne · Stände",x:660,y:186,w:305,h:150,fl:[0]},
+ {id:"flur",inA:true,label:"Flur",sub:"Taler-Wechsel",x:660,y:350,w:305,h:66,fl:[0],small:true},
  {id:"str",label:"Schulstraße",x:20,y:278,w:620,h:56,fl:[0],small:true},
- {id:"D",label:"Bauteil D",sub:"Klassen 5 und 6",x:20,y:350,w:270,h:350,fl:[0,1,3]},
+ {id:"D",label:"Bauteil D",sub:"Klassen 5 und 6",x:20,y:350,w:270,h:350,fl:[0,1]},
  {id:"hofD",label:"D-Hof",x:80,y:520,w:150,h:96,fl:[0],small:true},
  {id:"wd",label:"Winterdorf",sub:"Essen & Trinken",x:305,y:350,w:170,h:350,fl:[0]},
- {id:"B",label:"Bauteil B",sub:"Küche · NW · Musik",x:490,y:350,w:200,h:260,fl:[0,1,3]},
+ {id:"B",label:"Bauteil B",sub:"Küche · NW · Musik",x:490,y:350,w:200,h:260,fl:[0,1]},
  {id:"park",label:"Parkplatz",x:720,y:500,w:260,h:110,fl:[0]}
 ];
-var FILL={C:"#E6F5F2",hofC:"#DDF0DA",TH:"#F6EFD6",aula:"#F7E3EC",mensa:"#FBE6E2",foyer:"#EFE8FA",flur:"#F2F1EC",str:"#ECEAE3",D:"#E3ECFA",hofD:"#DDF0DA",wd:"#FBE6E2",B:"#E6F5F2",park:"#F2F1EC"};
+var FILL={A:"#EFE8FA",C:"#E6F5F2",hofC:"#DDF0DA",TH:"#F6EFD6",aula:"#F7E3EC",mensa:"#FBE6E2",foyer:"#EFE8FA",flur:"#F2F1EC",str:"#ECEAE3",D:"#E3ECFA",hofD:"#DDF0DA",wd:"#FBE6E2",B:"#E6F5F2",park:"#F2F1EC"};
 
 /* Zustand */
 var st={floor:0,win:null,cats:{},zone:null};
@@ -393,6 +421,8 @@ function renderMap(){
     +'<text x="30" y="100" style="font-size:20px;fill:var(--muted)">Bereich antippen</text></g>';
   Z.forEach(function(z){
     var onFloor=z.fl.indexOf(st.floor)>=0;
+    if(!onFloor&&z.inA) return;
+    if(z.id==="C"&&st.floor===3) z=Object.assign({},z,{label:"Oberstufe",sub:"Beratung & Führung"});
     var n=onFloor?zoneCount(z.id,st.floor):0;
     var off=!onFloor||n===0;
     var fill=off?"#F4F3EE":FILL[z.id];
@@ -440,7 +470,7 @@ function actHTML(r,act,i){
   var key=r.id+"-"+i, wins=act.w.split("").map(function(w){for(var j=0;j<WIN.length;j++) if(WIN[j].id===w) return '<span>'+esc(WIN[j].name)+'</span>'; return "";}).join("");
   var meta=[act.k,act.z].filter(Boolean).join(" · ");
   var ls=liveState(act);
-  return '<div class="act"><span class="dot" style="background:var(--c-'+act.c+')" title="'+esc(CAT[act.c])+'"></span>'
+  return '<div class="act" id="act-'+key+'"'+(act.st?' data-stall-row="'+act.st+'"':'')+'><span class="dot" style="background:var(--c-'+act.c+')" title="'+esc(CAT[act.c])+'"></span>'
     +'<span class="t">'+esc(act.t)+'</span>'
     +'<button class="fav" type="button" data-fav="'+key+'" aria-pressed="'+(!!favs[key])+'" aria-label="'+esc(act.t)+' merken">'+(favs[key]?"Gemerkt":"Merken")+'</button>'
     +(meta?'<span class="m">'+esc(meta)+'</span>':'')
@@ -451,7 +481,35 @@ function roomHTML(r,showAll){
   var acts=r.acts.map(function(x,i){return {x:x,i:i};}).filter(function(o){return showAll||actMatches(o.x);});
   if(!acts.length) return "";
   return '<div class="room" id="room-'+r.id+'"><h3>'+esc(r.nr)+(r.name?' <small>'+esc(r.name)+'</small>':'')+'</h3>'
+    +(r.plan==="wd"?wdPlan(r):'')
     +acts.map(function(o){return actHTML(r,o.x,o.i);}).join("")+'</div>';
+}
+
+/* Mini-Plan Winterdorf (nach Lageplan Winterdorf 2026, vereinfacht) */
+function wdPlan(r){
+  var pos={2:[52,84],9:[52,146],6:[52,208],1:[260,84],10:[260,146],5:[260,208],7:[130,124],4:[182,124],3:[130,236],8:[182,236]};
+  var h='<svg class="wdmap" viewBox="0 0 360 420" role="group" aria-label="Lageplan Winterdorf: Stände antippen">';
+  h+='<rect x="0" y="0" width="360" height="40" rx="8" class="wd-bldg"/><text x="180" y="25" text-anchor="middle" class="wd-lbl">Foyer / Hauptflur</text>';
+  h+='<rect x="0" y="48" width="38" height="372" rx="8" class="wd-bldg"/><text transform="translate(25 234) rotate(-90)" text-anchor="middle" class="wd-lbl">Bauteil D</text>';
+  h+='<rect x="322" y="48" width="38" height="372" rx="8" class="wd-bldg"/><text transform="translate(347 234) rotate(-90)" text-anchor="middle" class="wd-lbl">Bauteil B</text>';
+  h+='<rect x="42" y="48" width="276" height="372" rx="10" class="wd-yard"/>';
+  h+='<path d="M76 74 V40 M69 48 L76 40 L83 48 M284 74 V40 M277 48 L284 40 L291 48" class="wd-arrow"/>';
+  [[80,128,36],[182,128,44],[292,128,46]].forEach(function(b){h+='<rect x="'+b[1]+'" y="'+b[0]+'" width="104" height="'+b[2]+'" rx="6" class="wd-bed"/>';});
+  h+='<text x="180" y="102" text-anchor="middle" class="wd-small">Beet</text>';
+  h+='<rect x="52" y="290" width="58" height="118" rx="8" class="wd-seat"/><text transform="translate(85 349) rotate(-90)" text-anchor="middle" class="wd-small">Sitzplätze</text>';
+  h+='<rect x="250" y="290" width="58" height="118" rx="8" class="wd-seat"/><text transform="translate(283 349) rotate(-90)" text-anchor="middle" class="wd-small">Sitzplätze</text>';
+  r.acts.forEach(function(x){ if(!x.st) return; var p=pos[x.st]; if(!p) return;
+    h+='<g class="stall" role="button" tabindex="0" data-stall="'+x.st+'" aria-label="Stand '+x.st+': '+esc(x.t)+', '+esc(x.k)+'">'
+      +'<rect x="'+p[0]+'" y="'+p[1]+'" width="48" height="48" rx="6"/>'
+      +'<text x="'+(p[0]+24)+'" y="'+(p[1]+24)+'" text-anchor="middle" class="st-n">'+x.st+'</text>'
+      +'<text x="'+(p[0]+24)+'" y="'+(p[1]+40)+'" text-anchor="middle" class="st-k">'+esc(x.k.replace("SV + ","SV+"))+'</text></g>';
+  });
+  return h+'</svg><p class="wdnote">Stand antippen, um zu sehen, was es dort gibt. Grüne Pfeile: Durchgänge ins Gebäude. Bezahlt wird mit Gustav-Talern.</p>';
+}
+function pickStall(n){
+  document.querySelectorAll(".stall").forEach(function(g){g.classList.toggle("sel",g.getAttribute("data-stall")===String(n));});
+  var row=document.querySelector('[data-stall-row="'+n+'"]'); if(!row) return;
+  row.scrollIntoView({block:"nearest"}); row.classList.remove("flash"); void row.offsetWidth; row.classList.add("flash");
 }
 
 /* Schublade */
@@ -459,13 +517,15 @@ var drawer=document.getElementById("drawer"), scrim=document.getElementById("scr
 function openZone(zid,f,roomId,showAll){
   st.zone=zid; st.floor=f; lastFocus=document.activeElement;
   var z=zoneLabel(zid), rooms=zoneRooms(zid,f);
+  if(zid==="C"&&f===3) z={label:"Oberstufe"};
   document.getElementById("dtitle").textContent=z?z.label:"";
   var where=floorName(f)+(z&&z.sub?" · "+z.sub:"");
   if(zid==="aula"||zid==="mensa"||zid==="foyer"||zid==="flur") where="Bauteil A · "+where;
+  if(zid==="C"&&f===3) where="3. Etage · Oberstufe";
   document.getElementById("dwhere").textContent=where;
   var h=rooms.map(function(r){return roomHTML(r,showAll);}).join("");
   var hidden=rooms.reduce(function(s,r){return s+r.acts.length-roomCount(r);},0);
-  if(!h) h='<p class="empty">Zu Ihrer Auswahl gibt es hier gerade nichts.</p>';
+  if(!h) h='<p class="empty">Zu eurer Auswahl gibt es hier gerade nichts.</p>';
   if(hidden&&!showAll) h+='<button class="more" type="button" data-showall="1">'+hidden+' weitere Angebote ohne Filter zeigen</button>';
   document.getElementById("dbody").innerHTML=h;
   drawer.classList.add("open"); drawer.setAttribute("aria-hidden","false"); scrim.classList.add("open");
@@ -491,6 +551,10 @@ scrim.addEventListener("click",closeDrawer);
 document.addEventListener("keydown",function(e){if(e.key==="Escape"&&drawer.classList.contains("open")) closeDrawer();});
 document.getElementById("dbody").addEventListener("click",function(e){
   var m=e.target.closest("[data-showall]"); if(m){openZone(st.zone,st.floor,null,true); return;}
+  var g=e.target.closest("[data-stall]"); if(g) pickStall(g.getAttribute("data-stall"));
+});
+document.getElementById("dbody").addEventListener("keydown",function(e){
+  if(e.key!=="Enter"&&e.key!==" ") return; var g=e.target.closest("[data-stall]"); if(g){e.preventDefault(); pickStall(g.getAttribute("data-stall"));}
 });
 
 /* Merken (überall) */
@@ -532,8 +596,8 @@ function renderList(){
     {t:"Erdgeschoss · Bauteil D",f:0,z:["D","hofD"]},
     {t:"Erdgeschoss · Bauteil B",f:0,z:["B"]},
     {t:"Draußen und Turnhallen",f:0,z:["wd","TH","str","park"]},
-    {t:"1. Obergeschoss",f:1,z:["D","B","C"]},
-    {t:"3. Obergeschoss",f:3,z:["B","C"]}
+    {t:"1. Obergeschoss",f:1,z:["A","D","B","C"]},
+    {t:"3. Etage",f:3,z:["C"]}
   ];
   var total=0, h="";
   groups.forEach(function(g){
@@ -564,7 +628,7 @@ q.addEventListener("input",function(){
   });
   res.innerHTML=hits.slice(0,8).map(function(o){
     return '<li><button type="button" data-open="'+o.r.id+'"><span class="dot" style="background:var(--c-'+o.x.c+')"></span><span>'+esc(o.x.t)+(o.x.k?' <span style="color:var(--muted)">('+esc(o.x.k)+')</span>':'')+'</span><span class="where">'+esc(o.r.nr+" · "+floorName(o.r.f))+'</span></button></li>';
-  }).join("")||'<li><span style="display:block;padding:10px 14px;color:var(--muted)">Nichts gefunden. Versuchen Sie einen Raum wie „D070“ oder eine Klasse wie „5b“.</span></li>';
+  }).join("")||'<li><span style="display:block;padding:10px 14px;color:var(--muted)">Nichts gefunden. Versucht einen Raum wie „D070“ oder eine Klasse wie „5b“.</span></li>';
 });
 
 function renderAll(){renderWindows(); renderFloors(); renderMap(); renderCats(); renderList(); renderMine();
@@ -576,7 +640,7 @@ function fromHash(){
   if(openRoom(h)) return;
   var alias={turnhallen:"th1",schulstrasse:"schulstrasse",parkplatz:"parkplatz",hofc:"hofc",dhof:"dhof",winterdorf:"winterdorf"};
   if(alias[h]&&openRoom(alias[h])) return;
-  var m=h.match(/^bauteil-([bcd])-(eg|og1|og3)$/);
+  var m=h.match(/^bauteil-([abcd])-(eg|og1|og3)$/);
   if(m) openZone(m[1].toUpperCase(),m[2]==="eg"?0:m[2]==="og1"?1:3,null);
 }
 window.addEventListener("hashchange",fromHash);
